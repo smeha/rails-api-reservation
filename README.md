@@ -2,7 +2,7 @@
 * Mac OSX Catalina
 * Ruby through brew (the funky way now in Catalina)
   * ruby 2.7.2p137
-* Rails 6.0.3.4
+* Rails 6.1.3.1
 * PostgreSQL 13.1
 
 ## About
