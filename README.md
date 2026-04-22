@@ -8,7 +8,7 @@ Simple reservation API, that allows through an API call capture customer's infor
 * Bundler (4.0.10)
 * RSpec-Rails (v8.0)
 * RuboCop (via rubocop-rails-omakase + rubocop-performance + rubocop-rspec)
-* JWT for API toking decoding
+* JWT for API token decoding
 
 ## How to run locally
 ### Prerequisites
