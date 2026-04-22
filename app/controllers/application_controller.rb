@@ -1,16 +1,22 @@
 class ApplicationController < ActionController::API
+  wrap_parameters false
+
+  class AuthenticationError < StandardError; end
+
+  rescue_from AuthenticationError, with: :render_unauthorized
+
   private
     # https://jwt.io/
     def authentication
-      if request.headers["Authorization"].present?
-        authorization_header = request.headers["Authorization"].split(" ")
-        token = authorization_header.last.present? ? authorization_header.last : ""
-        JWT.decode token, "9C29AA3B6A47A440B20067DFF29F556EF22AD88A5D8F5E01F6B1A6962397C45A", true, { iss: "Simple API", algorithm: "HS256" }
-      else
-        raise CanCan::AccessDenied
-      end
+      token = request.headers["Authorization"].to_s.split.last
+      raise AuthenticationError if token.blank?
 
-      rescue JWT::VerificationError, JWT::DecodeError
-      raise CanCan::AccessDenied
+      JWT.decode token, "9C29AA3B6A47A440B20067DFF29F556EF22AD88A5D8F5E01F6B1A6962397C45A", true, { iss: "Simple API", algorithm: "HS256" }
+    rescue JWT::VerificationError, JWT::DecodeError
+      raise AuthenticationError
+    end
+
+    def render_unauthorized
+      render json: { error: "Unauthorized" }, status: :unauthorized
     end
 end

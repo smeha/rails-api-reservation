@@ -17,6 +17,13 @@ RSpec.describe "API V1 reservation flow", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.parsed_body).to contain_exactly(customer_payload)
     end
+
+    it "returns unauthorized without a valid token" do
+      get "/api/v1/customer", headers: { "Authorization" => "invalid" }
+
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.parsed_body).to eq("error" => "Unauthorized")
+    end
   end
 
   describe "GET /api/v1/vehicle" do
@@ -46,6 +53,15 @@ RSpec.describe "API V1 reservation flow", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.parsed_body).to eq("Time slot reserved")
       expect(TimeSlot.order(:created_at).last).to be_active
+    end
+
+    it "returns validation errors when reservation cannot be created" do
+      create_customer
+
+      expect { create_reservation }.not_to change(Customer, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.parsed_body).to eq(validation_errors)
     end
   end
 
@@ -109,6 +125,15 @@ RSpec.describe "API V1 reservation flow", type: :request do
       time_slot: {
         time: "12:00"
       }
+    }
+  end
+
+  def validation_errors
+    {
+      "errors" => [
+        "First name name is not unique",
+        "Last name name is not unique"
+      ]
     }
   end
 end

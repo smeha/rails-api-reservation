@@ -7,7 +7,6 @@ gem "rails", "~> 8.1"
 gem "pg", "~> 1.6"
 gem "puma", "~> 6.0"
 gem "jwt"
-gem "cancancan"
 gem "bootsnap", ">= 1.4.4", require: false
 gem "tzinfo-data", platforms: [ :windows, :jruby ]
 
